@@ -1,0 +1,381 @@
+---
+title: "CIND119 Project"
+author: "Group 9"
+date: "18/04/2021"
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## CIND 119 Project
+
+Group Member: Ajanthan Mathialagan, Rodrigo Marinho Bazyl
+
+## Workload Distribution
+
+|Names                |List of Tasks Performed                                       |Contribution               |
+|---------------------|--------------------------------------------------------------|---------------------------|
+|Ajanthan Mathialagan | Summary, Data Preparation, Predictive , COnclusion           | 50%                       |
+|Rodrigo Marinho      | Summary, Data Preparation, Predictive , Conclusion           | 50%                       |
+
+
+
+
+# German Credit Card Data Set
+
+## Abstract
+
+in order to provide loans to customers, a bank needs to make the right decision in determining who should get the approval and who should not. The goal for our project is to find which attributes from the given german credit card data set contribute or influence our decision variable creditability. We will be using  the following predictive analysis techniques: Decision tree and Naives Bayes method to answer this question. The tool that we will be using is R studio.
+
+## Description of the Dataset:
+The German Dataset contains 1000 observations of 20 attributes with the class attribute credibility, showing good or bad credit risk.This is a brief description of of each attribute
+
+Creditability: Showing whether the credit is good or bad (1 = good credit and  0 = bad credit)
+
+Account Balance: Checking account status
+
+Duration of Credits (months): Duration of credits in months
+
+Payment of status of previous credits: Credit history ( 0 = no credit, 1 = all credit at this bank is paid, 2 = existing credit paid back duly til now, 3 = delay in paying off the past, 4 = critical account) 
+
+ Purpose: Qualitative attribute showing the purpose of the loan (0: New car, 1: Used car , 2:Furniture/Equipment, 3: Radio/Television, 4: Domestic Appliances  , 5: Repairs ,6: Education ,7:Vacation, 8: Retraining ,9: Business, 10: Others
+
+Credit Amount: Numerical value showing the credit amount
+
+Value Savings/Stocks: Qualitative attribute showing average balance in savings and stocks (1 : < 100 DM, 2: 100<= ... <  500 DM, 3 : 500<= ... < 1000 DM, 4 : =>1000 DM, 5:   unknown/ no savings account)
+
+Length of Current employment: Qualitative attribute showing length of employment (1 unemployed, 2:  < 1 year, 3: 1<=...<4 years, 4: 4<=.
+..<7 years, 5:>=7years
+Instalment Percent: Instalment rate in percentage of disposable income 
+
+Sex and Martial Status: Qualitative attribute showing showing gender and martial status(1: male :divorced/separated, 2: female : divorced/separated/married, 3 : male:single, 4: male:married/widowed, 5 : female : single
+
+Guranators:(Qualitative) Guarantors and co-applicants: (1 : none, 2 : co-applicant,           3 :guarantor)
+
+Duration in Current Address: Qualitative value showing the duration in current address (1: <= 1year,  2: 1<...<=2 years, 3: 2<...<=3 years,  4: >3years)
+
+Most Valuable available asset: Qualitative attribute showing valuable assets
+ ( 1 : real estate, 2 : savings agreement/ life insurance, 3 : car or other, 4 : unknown / no property)
+
+Age (years): Numeric value showing age in years
+
+Concurrent Credits: installment plans (  1 : bank,  2 : stores, 3 : none )
+
+Type of apartment: Type of housing ( 1 : rent,  2 : own, 3 : for free)
+
+No credit at this bank: Numerical value showing number of existing credits at
+the bank
+
+Occupation: job (Qualitative) (1 : unemployed/ unskilled  - non-resident,  2 : unskilled - resident, 3 : skilled employee / official,  4 : management/ self-employed/highly qualified employee/ officer)
+
+No of dependants: Numerical value showing number of dependants
+
+Telephone: qualitative attribute for telephone number (1: yes, 2: No)
+
+Foreign Worker: Qualitative attribute showing whether the person is the foreign worker or not  (1:yes , 2: no)
+
+
+## Data Preperation 
+For our data preperation we will find which attributes are meaningful to the class attribute Credibility and eliminate the attributes which show no influence to the class attribute. We will apply the following methods to the data; Correlation analysis, Regression analysis and Data visualization to see which attributes are meaningful and which are not. Our first step is to Clean the data, get rid of any NA values in the data set and find out which are the categorical attributes in the data set them levels based on the description provided in the dataset. We will first look at the attributes and see what type they are whether they are qualitative, quantitative, nominal or ordinal, etc. 
+
+|Attributes    |Nominal or Ordinal|Qualitative or Quantitative|
+|--------------|------------------|---------------------------|
+|Creditability | Nominal          | Qualitatitive             |
+|Account Balance| Nominal         | Qualitative               |
+|Duration of Credits | Numerical  | Quantitative              |
+|Payment of Status of previous credit|Nominal|Qualitative     |
+|Purpose| Nominal                 | Qualitative               |
+|Credit Amount |Numerical         |Quantitative               |
+|Length of Current Employment|Ordinal|Qualitative             |
+|Value Savings/Stocks|Nominal | Qualitative                   |
+|Instalment Percent| Nominal| Qualitative                     |
+|Sex / Martial Status |Nominal|Qualitative                    |
+|Guarantors|Nominal | Qualitative                             |
+|Duration in Current Address|Ordinal|Qualitative              |
+|Most Valuable Asset|Nominal|Qualitative                      |
+|Age            |                 Numerical|      Quantitative|
+|Concurrent Credits|Nominal                       |Qualitative|
+|Type of Apartment|Nominal                        |Qualitative|
+|Numbers of Credits at this bank| Numerical       | Quantative|
+|Telephone|Nominal                                |Qualitative|
+|Foreign Worker|Nominal                           |Qualitative|
+
+This is quick Look at the Data Set we are working with clearing the NA values if any NA values exists. 
+
+```{r, echo = FALSE}
+
+german_credit <- read.csv("C:/Users/Ajanthan/Desktop/german_credit.csv")
+g<-na.omit(german_credit)
+head(g, 5)
+```
+
+### Correlation Between The Attributes 
+
+We want to see which attritubes influence our class variable Creditability. We can check the Correlation matrix to get an idea of which attributes contribute to good or bad credit and which attributes dont. 
+```{r, echo = FALSE}
+library(GGally)
+library(ggplot2)
+library(tidyverse)
+my_data <- german_credit
+#relabled names in Data into Abbreviations to make the plot easier to read
+names(my_data)[1] <- "C"
+names(my_data)[2] <- "AB"
+names(my_data)[3] <- "DCM"
+names(my_data)[4] <- "PSPC"
+names(my_data)[5] <- "P"
+names(my_data)[6] <- "CA"
+names(my_data)[7] <- "VSS"
+names(my_data)[8] <- "LCE"
+names(my_data)[9] <- "I"
+names(my_data)[10] <- "SMS"
+names(my_data)[11] <- "G"
+names(my_data)[12] <- "DCA"
+names(my_data)[13] <- "MVAA"
+names(my_data)[14] <- "Age"
+names(my_data)[15] <- "CC"
+names(my_data)[16] <- "TA"
+names(my_data)[17] <- "NCB"
+names(my_data)[18] <- "Occ"
+names(my_data)[19] <- "ND"
+names(my_data)[20] <- "Tel"
+names(my_data)[21] <- "FW"
+
+ggcorr(my_data, low = "steelblue", mid = "white", high = "darkred")
+```
+Based on the Correlation plot blue indicates negative correlation, white indicates no correlation and dark red indicates highly positive correlation. Looking at the correlation graph we can see that Creditability, is highly correlated to Account Balance,  Payment Status of Previous Credit, Value in Saving Stocks, Age and there is weaker correlation with Duration of Credit, Credit Amount, Most Valuable available asset. We can also see that there is strong correlation between other attributes, such as Duration of Credits per month and Credit Amount. This makes sense because the credit amount is dependent on how long the credit lasts.
+
+## Multiple Linear Regression
+
+Lets use regression to see which attributes Influence Creditability. Since we are working with Categorical response variable Creditability (good or bad) it will be best to use a generalized linear model. General linear model (GLM) usually refers to linear regression models for a continuous response variable given continuous and/or categorical predictors. We will use an aditative model where our class attribute Creditability will be our response variable and the rest of the attributes will be our decision varaibles. It will be best to factor the attributes first based on their levels provided in the description to see which hold accountable to creditability. 
+
+```{r, echo = FALSE}
+newdata<-german_credit
+newdata$Creditability <- factor(newdata$Creditability, levels = c(1,0), labels = c("good","bad"))
+newdata$Payment.Status.of.Previous.Credit <- factor(newdata$Payment.Status.of.Previous.Credit, levels = c(0,1,2,3,4), labels = c("no credit", "all Credit Paid", "existing Credit", "delay", "critical Account"))
+newdata$Purpose = factor(newdata$Purpose, levels = c(0,1,2,3,4,5,6,7,8,9,10), labels = c("New car", "Used car", "Equipment", "Radio/Television", "Domestic Appliances", "Repairs", "Education", "Vacation", "Retraining", "Business", "Other"))
+newdata$Value.Savings.Stocks <- factor(newdata$Value.Savings.Stocks, levels = c(1,2,3,4,5), labels = c("<100", "100=<..<500", "500=<..<1000", "=>1000", "unknown/no saving account"))
+newdata$Length.of.current.employment <-factor(newdata$Length.of.current.employment, levels = c(1,2,3,4,5), labels = c("unemployed", "< lyear", " 1 year <...< 4year", "4year<=...<7years", "5>=7years"))
+newdata$Sex...Marital.Status <- factor(newdata$Sex...Marital.Status, levels = c(1,2,3,4,5), labels = c("male:divorced/seperated", "female:divorced/seperated", "male:single", "male:married/widowed" , "female:single"))
+newdata$Guarantors<- factor(newdata$Guarantors, levels = c(1,2,3), labels =c("none", "co-applicant", "guarantor" ))
+newdata$Duration.in.Current.address <- factor(newdata$Duration.in.Current.address, levels = c(1,2,3,4), labels = c("<= 1 year", "1<...<= 2 years", "2<..<= 3 years", ">3years"))
+newdata$Most.valuable.available.asset<-factor(newdata$Most.valuable.available.asset, levels = c(1,2,3,4), labels = c("real estate", "savings agreement/lifeinsurance", "car or other", "unknown/no property"))
+newdata$Concurrent.Credits<-factor(newdata$Concurrent.Credits, levels = c(1,2,3), labels = c("bank", "stores", "none"))
+newdata$Type.of.apartment<-factor(newdata$Type.of.apartment, levels = c(1,2,3), labels = c("rent" , "own", "free"))
+newdata$Telephone<-factor(newdata$Telephone, levels = c(1,2), labels = c("yes", "no"))
+newdata$Foreign.Worker <- factor(newdata$Foreign.Worker, levels = c(1,2), labels = c("yes", "no"))
+newdata$Account.Balance <-factor(newdata$Account.Balance, levels = c(1,2,3,4), labels = c("<0 Deutsche Mark", "0<=..<200 Deutsche Mark", ">200 Deutsche Mark", "No checking account"))
+newdata$Occupation <- factor(newdata$Occupation, levels = c(1,2,3,4), labels = c("unemployed/unskilled - non resident","unskilled-resident","skilled employee/official", "managemen/self-employed/highly qualified/officer"))
+
+head(newdata, 5)
+
+```
+```{r, echo = FALSE}
+fit <- glm(Creditability~., data = newdata, family = "binomial")
+summary(fit)
+q<-with(summary(fit), 1-deviance/null.deviance)
+print(paste('R-squared:', q))
+```
+We can see that some of the factored attributes have p-values that are extremely high which indicate they are insignificant to the model, but it doesn't mean we should drop them right away, further analysis of the model must be conducted to see which factors are significant to creditability. In addition the additative model probably isnt the best model because it's R-squared value is extremely low. R-squared = 0.268 which means the model only explains 27% variability of the response variable Creditability, which isn't good. We can apply stepwise regression to eliminate some of the redundant variables base on the AIC score which represents the quality of the model.
+
+```{r, echo = FALSE}
+library(MASS)
+step.model <- stepAIC(fit, direction = "both", trace = FALSE)
+summary(step.model)
+k<-with(summary(step.model), 1-deviance/null.deviance)
+print(paste("R-squared: ", k ))
+```
+We can see that even by applying stepwise regression based on AIC levels, we choose the model with the lowest AIC, lower AIC implies better quality in the model. It will probably be better to compare a model with interactions such as y = (x1 +...+xn)^2 and our additative model y=(x1+..+xn) where y is class attribute and x1,...,xn are attributes and apply better model selection processes to come up with a better model and find which attributes influence Creditability. Looking at the p-values of the predictors we can see that stand out to be more significant than the others. For instance, Credit Amount is signficant which makes sense because you know whether you have good or bad credit depending on the amount of credit you have.
+
+## Data Visualization 
+
+Lets Look at some graphs to see any meaniful representation of good credit and bad credit based on the assumptions we found through the correlation graphs and Regression Analysis. We will display them using a series of bar charts to get a better understanding of the attributes involved with good or bad credit.
+
+
+```{r, echo = FALSE}
+library(dplyr)
+credAb <- table(german_credit$Creditability, german_credit$Account.Balance)
+barplot(credAb, main = "Creditability ~ Account Balance", xlab = "Account Balance", ylab = "Bad / Good", col = c("red", "royal blue"))
+```
+The bar plot above shows the relationship between creditability and account balance. Where, 1 : ... < 0 DM 
+, 2 : 0 <= ... < 200 DM 
+, 3 : ... >= 200 DM / salary assignments for at least 1 year 
+, 4 : no checking account 
+ You can see that among people with no checking account where is higher the proportion of good credit for bad credit. Among those with a checking account, this proportion gets higher as the Deutsche Mark increases.  You can also see that the higher is the Deutsche Mark, the less people will ask for a loan with this bank
+
+```{r, echo = FALSE}
+credDcm <- table(german_credit$Creditability, german_credit$Duration.of.Credit..month.)
+barplot(credDcm ,main = "Creditability ~ Duration of Credit Month", 
+        xlab = "Duration of Credit Month",
+        ylab = "Bad / Good", col = c("red", "royal blue"))
+
+```
+The bar plot above shows the relationship between creditability and duration of credit month. You can see by this graphic that usually people with good credit will opt for loans with duration equal to 24 months or less. So, the shorter the loan duration, bigger the chances of this loan being properly paid.
+
+```{r, echo = FALSE}
+credPspc <- table(german_credit$Creditability, german_credit$Payment.Status.of.Previous.Credit)
+barplot(credPspc, main = "Creditability ~ Payment Status Of Previous Credit", ylab = "Bad/Good Credit", xlab  = "Payment Status of Previous Credit", col = c("red", "royal blue"))
+```
+
+The bar plot above shows the relationship between creditability and payment status of previous credit. As you can see, most customers with active credits being paid back fully until now have a higher chance of paying back future credit loans. Surprisingly, you can see that among customers with a critical account there is a big chunk of them with good credit.
+```{r, echo = FALSE}
+credAge <- table(german_credit$Creditability, german_credit$Age..years.)
+barplot(credAge, main = "Creditability ~ Age", ylab = "Bad / Good Credit" , xlab = "Age in years", col = c("red","royal blue"))
+
+```
+The bar plot above shows the relationship between creditability and age. As you can see, the younger the customer, higher the chances that the person will not pay the credit loan on time. This maybe due to the fact that younger customers are more irresponisble than older customers etc. 
+
+```{r, echo = FALSE}
+credPurp <- table(german_credit$Creditability, german_credit$Purpose)
+barplot(credPurp, main = "Creditability ~ Purpose", ylab = "Good / Bad Credit", xlab = "Purpose", col = c("red", "royal blue"))
+
+```
+
+The bar plot above shows the relationship between creditability and the purpose of the loan. Where, 0: New car, 1: Used car , 2:Furniture/Equipment, 3: Radio/Television, 4: Domestic Appliances  , 5: Repairs ,6: Education ,7:Vacation, 8: Retraining ,9: Business, 10: Others. As you can see, people who get a loan with the goal to invest in their home or their professional advance have a lower chance of not paying back their loan on time. We can also see that Vacation isn't a factor involved to good/ bad credit. 
+```{r, echo = FALSE}
+credvalueAsset <- table(german_credit$Creditability, german_credit$Most.valuable.available.asset)
+barplot(credvalueAsset, main = "Creditability ~ Valuable Available Asset", ylab = "Good / Bad Credit", xlab = "Valuable Available Asset", col = c("red", "royal blue"))
+```
+The bar graphs shows a representation of Creditability based on Valuable Available Assets where, 1 : real estate, 2 : savings agreement/ life insurance, 3 : car or other, 4 : unknown / no property, We can see that people who hold real estate have the best porportion between good and bad credit. This makes sense because when buying a house it is dependant on your credit score for mortgage approval. Also for cars the better the credit score, the better loan you will be able to recieve. 
+
+```{r, echo = FALSE}
+credVSS <- table(german_credit$Creditability, german_credit$Value.Savings.Stocks)
+barplot(credVSS, main = "Creditability ~ Value Savings Stocks", ylab = "Good /Bad Credit", xlab = "Value Savings Stocks", col = c("red", "royal blue"))
+```
+
+The bar graph shows a representation of Creditability based on Value of Savings in stocks where, (1 : < 100 DM, 2: 100<= ... <  500 DM, 3 : 500<= ... < 1000 DM, 4 : =>1000 DM, 5:   unknown/ no savings account). We can see that people with less than 100 DM have the worst porportion related to good/bad credit. The more money people invest in Stocks the better the porportion of good credit to bad credit gets better.
+
+After going through these steps of Data preperation we can say that most of the attributes of the german_credit card data set influence Creditability but, Credit Amount, Valuable Available Assets, Value Saving Stocks, Purpose, Age, Payment Status of Previous Credits, Duration of Credits per month and Account Balance influence Creditability the most out of all the attributes based on the results above. 
+
+
+## Predictive Modeling
+
+### Decision Tree Analysis
+
+Decision Trees are a type of Supervised Machine Learning which is you explain what the input is and what the corresponding output is in the training data. The data is continuously split according to a certain parameter. The tree is explained though the decision nodes and leaves. The leaves are the decisions or the final outcomes. And the decision nodes are where the data is split. When applying this method we must first split our data into one training set and one testing set. We will split it so 80% of the data is training and we will test on 20% of the data
+
+First we must split the data into 2 sets a training set and a testing set. 
+
+```{r, echo = FALSE}
+set.seed(123)
+dt <- sort(sample(nrow(newdata), nrow(newdata)*0.8))
+train_data <-newdata[dt,]
+test_data <-newdata[-dt,]
+dim(test_data)
+dim(train_data)
+```
+
+```{r, echo = FALSE}
+prop.table(table(train_data$Creditability))
+```
+
+```{r, echo = FALSE}
+prop.table(table(test_data$Creditability))
+```
+We will now apply the decision tree classification method. We will use 2 models to test this classification one with all the attributes and one with all influential attributes based on the data preperation methods we used to find significant attributes to creditability. 
+
+This is the decision tree based on the model with attributes which showed high influence to Creditability
+```{r, echo = FALSE}
+library(rpart)
+library(rpart.plot)
+fit <- rpart(Creditability~., data = train_data, method = 'class')
+#summary(fit)
+y1 <- rpart.plot(fit, extra = 101)
+
+```
+
+This is the model with all attributes
+```{r, echo = FALSE}
+fit2<- rpart(Creditability~ Account.Balance + Payment.Status.of.Previous.Credit + Purpose + Age..years. + Value.Savings.Stocks + Most.valuable.available.asset,            data = train_data, method = 'class')
+#summary(fit2)
+y2<- rpart.plot(fit2, extra = 106)
+```
+
+We will now see how accurate the methods were on predicting the data. We will find the accuracy based on the decision tree method. We will first need to make a confusion matrix. Classification accuracy is the ratio of correct predictions to total predictions made
+
+## Performance Metric for Decision Tree Classification 
+
+### Confusion Matrix
+```{r, echo = FALSE}
+pred <-predict(fit, test_data, type = 'class')
+pred2 <-predict(fit2, test_data, type = 'class')
+table_mat <- table(test_data$Creditability, pred)
+table_mat
+table_mat2 <- table(test_data$Creditability, pred2)
+table_mat2
+```
+We can see that 116/200 of the credit was labeled as good credit and 17 good credit were mislabled as bad credit for the model with all attributes
+
+We can see that 117/200 of good credit was labeled as good credit and 16 good credit were mislabled as bad credit for the model with the attributes that highly influence Creditability.
+
+
+```{r, echo = FALSE}
+accuracy_Test1 <- sum(diag(table_mat)) / sum(table_mat)
+print(paste('Accuracy for test with model containing all attributes', accuracy_Test1))
+accuracy_Test2 <- sum(diag(table_mat2)) / sum(table_mat2)
+print(paste('Accuracy for test with model containing influential attributes', accuracy_Test2))
+```
+This implies that 74% of the data is predicted accurately through the Decision Tree method of using all attributes in the model and 72% of the data is predicted accurately using just the attributes that influence Creditability. Therefore this classification method is a good method being able to predict most of the data from the training set.In addition the the model using all the attributes is slightly better than the model using attributes that highly influence creditabibly.
+
+### Naives Bayes Classification
+Naives Bayes is a classification technique based on Bayes’ Theorem with an assumption of independence among predictors. A Naive Bayes classifier assumes that the presence of a particular feature in a class is unrelated to the presence of any other feature. Similar to the the decision tree, we will evaluate based on a model containing all the attributes and a model containing attributes that influence the class attribute Creditability.
+
+This is the Naives bayes classification with all the attributes in the model
+```{r, echo = FALSE}
+library(e1071)
+model1 <- naiveBayes(Creditability~ ., data = train_data)
+model1 
+```
+
+This is the Naives Bayes classification with attributes that showed high significance to Creditability
+```{r, echo = FALSE}
+model2<-naiveBayes(Creditability~Account.Balance + Payment.Status.of.Previous.Credit + Purpose + Age..years. + Value.Savings.Stocks + Most.valuable.available.asset, data = train_data)
+
+model2
+```
+## Performance Metrics for Naives Bayes Classification 
+
+### Confusion Matrix
+```{r, echo = FALSE}
+pred3 <- predict(model1, newdata = test_data, type = "class")
+tab1 <- table(pred3, test_data$Creditability)
+tab1
+pred4 <- predict(model2, newdata = test_data, type = "class")
+tab2 <- table(pred4, test_data$Creditability)
+tab2
+```
+We can see that 115/200 of the credit was labeled as good credit and 26 good credit were mislabled as bad credit for the model with all attributes
+
+We can see that 112/200 of the credit was labeled as good credit and 33 good credit were mislabled as bad credit for the model that highly influence Creditability.
+
+
+```{r, echo = FALSE}
+accuracy_Test3 <- sum(diag(tab1)) / sum(tab1)
+print(paste('Accuracy for test with all attributes', accuracy_Test3))
+accuracy_Test4 <- sum(diag(tab2)) / sum(tab2)
+print(paste('Accuracy for test with attributes that influence Creditability', accuracy_Test4))
+```
+
+Naive Bayes is a collection of classification algorithms commonly used in Machine Learning. In this project we used the Naive Bayes algorithm to predict if the customer should receive or not a loan. We used a simple train-test set split strategy for this dataset. The main attribute was ‘Creditability”.
+The final output shows that we build a Naive Bayes classifier that can predict if the customer should receive or not a loan with an accuracy of 78%. In addition for the model including the attributes that influence creditability has an accuracy of 73%. Thus the model using all attributes is slightly better. 
+
+### Performance Comparison
+
+Based on the performance metric of Naives Bayes Classifier and Decision Tree Classifier. We can see that Naives Bayes Classifier has a slight edge since its accuracy of retrieving data is 78% accurate compared to the 74% accuracy of the Decision Tree Classifier. 
+
+## Conclusion/Recommendations
+
+Based on the finding in the data preperations section, one major finding that I thought was interesting was during regression analysis of the models. The r-squared of the additative model was 0.268 which implies that on 26.8 or around 27 % of the data from the regression fits the data, after applying stepwise regression which elimanted the attributes which were redundant by looking at AIC scores. The R-squared value for the step.model was 26% which indicates that less data from the regression was fitted onto the data. Even though the R-squared values were low for the model the AIC which is estimator of prediction error indicated it was the best model by choice. This model represented the attributes that influence Creditability. Looking at the p-values of the attributes we saw that some were more significant than the others. For instance, Credit Amount is signficant which makes sense because you know whether you have good or bad credit depending on the amount of credit you have. 
+
+for the Correlation Graph we saw that Creditability, is highly correlated to Account Balance,  Payment Status of Previous Credit, Value in Saving Stocks, Age and there is weaker correlation with Duration of Credit, Credit Amount, Most Valuable available asset. We can also see that there is strong correlation between other attributes, such as Duration of Credits per month and Credit Amount. This makes sense because the credit amount is dependent on how long the credit lasts. This also shows that that there exists some aspects of multicollinearity which must be taken into account when working with the data set. 
+
+Based on the findings in our Predictive modeling using both naives bayes classification and decision tree classification. The decision tree showed the outcomes of good or bad credit going through a series of decisions and their possible consequences, including the probability of good or bad credit occuring going through that path. Similar to the tree method Bayes showed that We also saw that around 78% of the data was accurately classified compared to the decision tree method which was 74% 
+
+## Recommendations to the company
+
+Based on the analysis of the model and how poor the model fitted the regression data. There are probably other attributes that can be included into the dataset that were not inolved in the original data set, which influence whether a customer should or should not recieve a loan. In addition in our side further steps could have been performed to the model selection process, such as adding interactions to the model, etc to see more relations between the attributes. 
+
